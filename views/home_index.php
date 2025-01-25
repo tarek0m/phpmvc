@@ -1,4 +1,4 @@
 <?php
-echo 'This is the home page';
+echo 'This is the home page <br>';
 ?>
-<a href="/phpmvc/products">View Products Index Page</a>
+<a href="/phpmvc/products/index">View Products Index Page</a>
