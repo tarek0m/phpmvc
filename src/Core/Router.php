@@ -20,15 +20,9 @@ class Router
 
     foreach ($this->routes as $route) {
       $pattern = $this->getPatternFromRoutePath($route['path']);
-      print_r($route);
-      echo '<br>';
-      echo 'pattern: ' . $pattern . '<br>';
       if (preg_match($pattern, $path, $matches)) {
         $matches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
         $params = array_merge($route['params'], $matches);
-        echo 'params: ';
-        print_r($params);
-        echo '<br>';
 
         return $params;
       }

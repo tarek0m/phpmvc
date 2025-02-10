@@ -2,10 +2,16 @@
 
 namespace App\Controllers;
 
+use Core\Viewer;
+
 class Home
 {
+  public function __construct(private Viewer $viewer) {}
   public function index()
   {
-    require 'views/home_index.php';
+    echo $this->viewer->render('shared/header', [
+      'title' => 'Home',
+    ]);
+    echo $this->viewer->render('home/index');
   }
 }

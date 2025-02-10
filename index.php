@@ -1,6 +1,7 @@
 <?php
 
 use Core\Router;
+use Core\Dispatcher;
 
 spl_autoload_register(function (string $className) {
   $className = str_replace('\\', '/', $className);
@@ -13,27 +14,14 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = str_replace('/phpmvc', '', $path);
 
 $router = new Router;
-// we add the patterns to the router
+
+$router->add('/admin/{controller}/{action}', ['namespace' => 'Admin']);
+$router->add('/{title}/{id:\d+}/{page:\d+}', ['controller' => 'products', 'action' => 'showPage']);
+$router->add('/{controller}/{id:\d+}/{action}');
 $router->add('/', ['controller' => 'home', 'action' => 'index']);
 $router->add('/products', ['controller' => 'products', 'action' => 'index']);
 $router->add('/products/view', ['controller' => 'products', 'action' => 'view']);
 $router->add('/{controller}/{action}');
-$router->add('/{controller}/{id:\d+}/{action}');
 
-
-$params = $router->match($path);
-echo '<pre>';
-echo 'params: ';
-print_r($params);
-echo '</pre>';
-if ($params === false) {
-  http_response_code(404);
-  echo '404 - Page not found';
-  exit;
-}
-$controller = "App\Controllers\\" . ucwords($params['controller']);
-$action = $params['action'];
-
-
-$controller_obj = new $controller;
-$controller_obj->$action();
+$dispatcher = new Dispatcher($router);
+$dispatcher->handle($path);
