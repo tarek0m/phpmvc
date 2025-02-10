@@ -1,27 +1,32 @@
 <?php
 
-use Core\Router;
-use Core\Dispatcher;
+declare(strict_types=1);
 
-spl_autoload_register(function (string $className) {
-  $className = str_replace('\\', '/', $className);
-  require "src/$className.php";
+$path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+
+spl_autoload_register(function (string $class_name) {
+
+    require "src/" . str_replace("\\", "/", $class_name) . ".php";
 });
 
+$router = new Framework\Router;
 
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-// FOR THIS CASE ONLY
-$path = str_replace('/phpmvc', '', $path);
+$router->add("/admin/{controller}/{action}", ["namespace" => "Admin"]);
+$router->add("/{title}/{id:\d+}/{page:\d+}", ["controller" => "products", "action" => "showPage"]);
+$router->add("/product/{slug:[\w-]+}", ["controller" => "products", "action" => "show"]);
+$router->add("/{controller}/{id:\d+}/{action}");
+$router->add("/home/index", ["controller" => "home", "action" => "index"]);
+$router->add("/products", ["controller" => "products", "action" => "index"]);
+$router->add("/", ["controller" => "home", "action" => "index"]);
+$router->add("/{controller}/{action}");
 
-$router = new Router;
+$container = new Framework\Container;
 
-$router->add('/admin/{controller}/{action}', ['namespace' => 'Admin']);
-$router->add('/{title}/{id:\d+}/{page:\d+}', ['controller' => 'products', 'action' => 'showPage']);
-$router->add('/{controller}/{id:\d+}/{action}');
-$router->add('/', ['controller' => 'home', 'action' => 'index']);
-$router->add('/products', ['controller' => 'products', 'action' => 'index']);
-$router->add('/products/view', ['controller' => 'products', 'action' => 'view']);
-$router->add('/{controller}/{action}');
+$container->set(App\Database::class, function () {
 
-$dispatcher = new Dispatcher($router);
+    return new App\Database("localhost", "product_db", "product_db_user", "secret");
+});
+
+$dispatcher = new Framework\Dispatcher($router, $container);
+
 $dispatcher->handle($path);

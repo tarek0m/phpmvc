@@ -1,37 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Models\Product;
-use Core\Viewer;
+use Framework\Viewer;
 
 class Products
 {
-  public function __construct(private Viewer $viewer, private Product $model) {}
-  public function index()
-  {
-    echo $this->viewer->render('shared/header', [
-      'title' => 'Products Index',
-    ]);
-    echo $this->viewer->render('Products/index');
-  }
+    public function __construct(private Viewer $viewer, private Product $model)
+    {
+    }
 
-  public function view()
-  {
-    $products = $this->model->getData();
+    public function index()
+    {
+        $products = $this->model->getData();
 
-    echo $this->viewer->render('shared/header', [
-      'title' => 'Products',
-    ]);
-    echo $this->viewer->render('Products/view', [
-      'products' => $products
-    ]);
-  }
+        echo $this->viewer->render("shared/header.php", [
+            "title" => "Products"
+        ]);
 
-  public function showPage(string $title, int $id, int $page)
-  {
-    echo "Title: $title<br>";
-    echo "ID: $id<br>";
-    echo "Page: $page<br>";
-  }
+        echo $this->viewer->render("Products/index.php", [
+            "products" => $products
+        ]);
+    }
+
+    public function show(string $id)
+    {
+        echo $this->viewer->render("shared/header.php", [
+            "title" => "Product"
+        ]);
+
+        echo $this->viewer->render("Products/show.php", [
+            "id" => $id
+        ]);
+    }
+
+    public function showPage(string $title, string $id, string $page)
+    {
+        echo $title, " ", $id, " ", $page;
+    }
 }

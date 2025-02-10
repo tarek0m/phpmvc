@@ -1,19 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Database;
 use PDO;
+use App\Database;
 
 class Product
 {
-  public function __construct(private Database $db) {}
-  public function getData(): array
-  {
-    $pdo = $this->db->getConnection();
-    $stmt = $pdo->query('SELECT * FROM product');
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function __construct(private Database $database)
+    {
+    }
 
-    return $products;
-  }
+    public function getData(): array
+    {
+        $pdo = $this->database->getConnection();
+
+        $stmt = $pdo->query("SELECT * FROM product");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

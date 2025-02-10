@@ -1,4 +1,4 @@
-<a href="/phpmvc/products/index">View Products Index Page</a>
-</body>
+Here is the home index page
 
+</body>
 </html>
